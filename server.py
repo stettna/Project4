@@ -8,7 +8,7 @@ def server():
     server_socket.bind( (host, port) )
 
     server_socket.listen( 3 )
-    conn, address = server_socket.accept(i)
+    conn, address = server_socket.accept()
 
     print( "Connection from: " + str( address ))
     while True:
