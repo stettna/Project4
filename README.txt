@@ -26,7 +26,9 @@ regardless, each game will:
   - have a starting state
   - some states in between
   - and end state( one player wins and one player loses ) ( or draw depending )
-  
+
+test thing
+
 -- To Run --
 python3 example.py [arg1] [arg2] ...
 
