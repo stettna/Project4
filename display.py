@@ -49,7 +49,51 @@ class Display:
             self.board[pos_dict[i][0]][pos_dict[i][1]] = self.piece_list[i]
 
 
+    def detect_win( self ):
+        """Detects if a player a won the game or not"""
+        if any( 'X' == self.piece_list[a] == self.piece_list[b] == self.piece_list[c] 
+	    for a, b, c in [(0,1,2), (3,4,5), (6,7,8), (1,4,7), (0,3,6), (2,5,8), (0,4,8), (2,4,6)] ):
+            return True
+        else:
+            return False
+
+
+def Game_Logic():
+    ''' makes game do stuff correctly using Dispaly() "main()" '''
+    d = Display()
+    i = 0
+    while True:
+        try:
+            player_move = int( input( "put piece where?: " ) )
+            if (player_move > 8) or (player_move < 0):
+                raise ValueError
+        except ValueError:
+            print( "You must enter an integer ( 0 - 8 )" )
+            continue
+
+        try:
+            if i % 2 == 0:
+                if (d.piece_list[player_move] == 'O') or (d.piece_list[player_move] == 'X'):
+                    raise Exception
+                d.piece_list[player_move] = 'X'
+                d.draw_board()
+                if d.detect_win():
+                    print( "Player 1 wins!" )
+                    break
+                i += 1
+            else:
+                if (d.piece_list[player_move] == 'X') or (d.piece_list[player_move] == 'O'):
+                    raise Exception
+                d.piece_list[player_move] = 'O'
+                d.draw_board()
+                if d.detect_win():
+                    print( "Player 2 wins!" )
+                    break
+                i += 1
+        except Exception:
+            print( "Slot already occupied!" )
+            continue
+
 #This is just for testing to see what the print out looks like
-d =Display()
-d.piece_list[4] = 'X'
-d.draw_board()
+if __name__ == "__main__":
+    Game_Logic()
