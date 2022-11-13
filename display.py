@@ -1,5 +1,5 @@
 '''This may need to be modifed some for sending so it prints to the user properly, but the basic pieces should be here '''
-
+import os
 
 class Display:
     'This class creates a display object that holds to current state of the game and associated methods'
@@ -61,8 +61,12 @@ class Display:
 def Game_Logic():
     ''' makes game do stuff correctly using Dispaly() "main()" '''
     d = Display()
+    d.draw_board()
     i = 0
     while True:
+        if i > 8:
+            print( "Draw! " )
+            break
         try:
             player_move = int( input( "put piece where?: " ) )
             if (player_move > 8) or (player_move < 0):
@@ -76,6 +80,7 @@ def Game_Logic():
                 if (d.piece_list[player_move] == 'O') or (d.piece_list[player_move] == 'X'):
                     raise Exception
                 d.piece_list[player_move] = 'X'
+                os.system( 'clear' )
                 d.draw_board()
                 if d.detect_win():
                     print( "Player 1 wins!" )
@@ -85,6 +90,7 @@ def Game_Logic():
                 if (d.piece_list[player_move] == 'X') or (d.piece_list[player_move] == 'O'):
                     raise Exception
                 d.piece_list[player_move] = 'O'
+                os.system( 'clear' )
                 d.draw_board()
                 if d.detect_win():
                     print( "Player 2 wins!" )
@@ -94,6 +100,6 @@ def Game_Logic():
             print( "Slot already occupied!" )
             continue
 
-#This is just for testing to see what the print out looks like
+#This is just for testing to seewhat the print out looks like
 if __name__ == "__main__":
     Game_Logic()
