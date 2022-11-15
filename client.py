@@ -1,7 +1,15 @@
 import socket
+import sys
 
 def client():
-    host = socket.gethostname()
+
+    try:
+        host_name = sys.argv[1]
+    except:
+        print("You must enter a host name")
+        return
+
+    host = host_name
     port = 5000
 
     client_socket = socket.socket()
