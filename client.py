@@ -10,24 +10,27 @@ def client():
         return
 
     host = host_name
-    port = 5000
+    port = 5001
 
     client_socket = socket.socket()
     client_socket.connect((host, port))
 
-    message = input('-> ')
+    player_no = client_socket.recv(1024).decode()
+    print( "WELCOME TO TIC TAC TOE\n" )
+    print( "You are Player: " + str( player_no ) )  
 
-    while message.lower().strip() != 'quit':
+    while True:
+        if player_no == "1":
+            message = input( "->" )
+            client_socket.send( message.encode() )
+            data = client_socket.recv(1024).decode()
+            print( "recieved: " + data )
 
-        client_socket.send( message.encode() )
-
-        data = client_socket.recv(1024).decode()
-
-        print( "recieved from server: " + data )
-
-        message = input( '-> ')
-
-    client_socket.close()
+        if player_no == "2":
+            data = client_socket.recv(1024).decode()
+            print( "recieved: " + data )
+            message = input( "->" )
+            client_socket.send( message.encode() )
 
 
 if __name__ == '__main__':

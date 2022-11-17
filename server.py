@@ -1,28 +1,38 @@
 import socket
 
+clients = list()
+
 def server():
-    host = socket.gethostname()
-    port = 5000
+    HOST = socket.gethostname()
+    PORT = 5001
+    CLIENT = []
 
-    server_socket = socket.socket()
-    server_socket.bind( (host, port) )
+    sock = socket.socket()
+    sock.bind(( HOST, PORT ))
+    sock.listen()
+    for i in range( 2 ):
+        conn, addr = sock.accept()
+        CLIENT.append( conn )
+        num = i + 1
+        CLIENT[i].send( str( num ).encode() )
 
-    server_socket.listen( 3 )
-    conn, address = server_socket.accept()
+#    for i in range( 2 ):
+#       print( CLIENT[i] )
 
-    print( "Connection from: " + str( address ))
     while True:
+        data = CLIENT[0].recv(1024).decode()
+        print( "recieved from player 1: " + data + " | sending to player 2." )
+        CLIENT[1].send( data.encode() )
 
-        data = conn.recv( 1024 ).decode()
-        if not data:
-            break
+        data = CLIENT[1].recv(1024).decode()
+        print( "recieved from player 2: " + data + " | sending to player 1." )
+        CLIENT[0].send( data.encode() )
 
-        print( "from connected user: " + str( data ) )
+        if data == "quit":
+            ...
 
-        data = input( '-> ' )
-        conn.send( data.encode() )
-
-    conn.close()
+    CLIENT[0].close()
+    CLIENT[1].close()
 
 if __name__ == '__main__':
     server()
