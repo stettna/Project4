@@ -9,7 +9,9 @@ def client():
         print("You must enter a host name")
         return
 
+
     host = socket.gethostname()
+
     port = 5000
 
     client_socket = socket.socket()
