@@ -1,5 +1,6 @@
 import socket
 import sys
+from termios import TCIFLUSH, tcflush
 
 def client():
 
@@ -21,6 +22,8 @@ def client():
 
     while True:
         if player_no == "1":
+
+            tcflush(sys.stdin, TCIFLUSH)
             message = input( "->" )
             client_socket.send( message.encode() )
             data = client_socket.recv(1024).decode()
@@ -29,6 +32,7 @@ def client():
         if player_no == "2":
             data = client_socket.recv(1024).decode()
             print( "recieved: " + data )
+            tcflush(sys.stdin, TCIFLUSH)
             message = input( "->" )
             client_socket.send( message.encode() )
 
