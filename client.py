@@ -20,32 +20,35 @@ def client():
     client_socket.connect((host, port))
 
     player_no = client_socket.recv(1024).decode()
+
     print( "WELCOME TO TIC TAC TOE\n" )
     print( "You are Player: " + str( player_no ) )
 
     if player_no == "1":
+        char = 'X'
         print("Waiting for opponent ... ")
         receive_data(client_socket)
-        char = 'X'
+        make_move(char, client_socket) 
+        receive_data(client_socket)
+
     else:
         char = 'O'
+        receive_data(client_socket)
 
     while True:
 
-        if player_no == "1":
-            make_move(char, client_socket)
-            receive_data()
-
-        if player_no == "2":
-            receive_data(client_socket)
-            make_move(char, client_socket)
+        print("Waiting for opponent to move ...")
+        receive_data(client_socket)
+        make_move(char, client_socket)
+        receive_data(client_socket)
 
 
 def receive_data(client_socket):
 
     data = client_socket.recv(1024).decode()
-    board.piece_list = data.split()
-    board.update_board()
+    board.piece_list = list(data)
+
+    board.draw_board()
 
 
 def make_move(char, client_socket):
@@ -57,14 +60,14 @@ def make_move(char, client_socket):
         tcflush(sys.stdin, TCIFLUSH)
         move = input("Invalid move! Try again: ")
 
-    board.piece_list[move] = char
+    board.piece_list[int(move)] = char
     client_socket.send(''.join(board.piece_list).encode())
 
 
 def is_valid_play(move):
 
-    if (move.is_digit() and int(move) >= 0 and int(move) < 9):
-        if board.piece_list[move] == ' ':
+    if (move.isdigit() and int(move) >= 0 and int(move) < 9):
+        if board.piece_list[int(move)] == '!':
             return True
 
     return False
