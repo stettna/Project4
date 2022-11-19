@@ -6,7 +6,7 @@ class Display:
 
     def __init__(self):
 
-        self.piece_list = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        self.piece_list = ['!', '!', '!', '!', '!', '!', '!', '!', '!']
         self.board = self.create_board()
 
 
@@ -46,7 +46,11 @@ class Display:
         pos_dict = {0:(0,1), 1:(0,5), 2: (0,9), 3:(2,1), 4:(2,5), 5: (2,9), 6:(4,1), 7:(4,5), 8: (4,9)}
 
         for i in range(9):
-            self.board[pos_dict[i][0]][pos_dict[i][1]] = self.piece_list[i]
+            if self.piece_list[i] == '!':
+                self.board[pos_dict[i][0]][pos_dict[i][1]] = ' '
+            else:
+                self.board[pos_dict[i][0]][pos_dict[i][1]] = self.piece_list[i]
+                
 
 
     def detect_win( self ):
