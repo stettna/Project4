@@ -32,6 +32,7 @@ class Display:
         'This method updates the board to its current state then prints it out'
 
         self.update_board()
+        os.system( 'clear' )
 
         for list in self.board:
             for el in list:
@@ -53,16 +54,7 @@ class Display:
                 
 
 
-    def detect_win( self ):
-        """Detects if a player a won the game or not"""
-        if any( 'X' == self.piece_list[a] == self.piece_list[b] == self.piece_list[c] 
-	    for a, b, c in [(0,1,2), (3,4,5), (6,7,8), (1,4,7), (0,3,6), (2,5,8), (0,4,8), (2,4,6)] ):
-            return True
-        else:
-            return False
-
-
-def Game_Logic():
+"""def Game_Logic():
     ''' makes game do stuff correctly using Dispaly() "main()" '''
     d = Display()
     d.draw_board()
@@ -102,8 +94,8 @@ def Game_Logic():
                 i += 1
         except Exception:
             print( "Slot already occupied!" )
-            continue
+            continue"""
 
-#This is just for testing to seewhat the print out looks like
+
 if __name__ == "__main__":
     Game_Logic()

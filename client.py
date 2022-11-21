@@ -3,7 +3,6 @@ import sys
 from termios import TCIFLUSH, tcflush
 import display
 
-board = display.Display()
 
 def client():
 
@@ -24,39 +23,60 @@ def client():
     print( "WELCOME TO TIC TAC TOE\n" )
     print( "You are Player: " + str( player_no ) )
 
-    if player_no == "1":
-        char = 'X'
-        print("Waiting for opponent ... ")
-        receive_data(client_socket)
-        make_move(char, client_socket) 
-        receive_data(client_socket)
-
-    else:
-        char = 'O'
-        receive_data(client_socket)
-
     while True:
+        board = display.Display()
+        status = ['GIP']      
 
-        print("Waiting for opponent to move ...")
-        receive_data(client_socket)
-        make_move(char, client_socket)
-        receive_data(client_socket)
+        if player_no == "1":
+            char = 'X'
+            print("Waiting for opponent to join ... ")
+            receive_data(client_socket, board, status)
+            make_move(char, client_socket, board) 
+            receive_data(client_socket, board, status)
+
+        else:
+            char = 'O'
+            receive_data(client_socket, board, status)
+
+        while True:
+            print("Waiting for opponent to move ...")
+
+            receive_data(client_socket, board, status)
+            if not status[0] == 'GIP':
+                print(player_no, status)
+                break
+
+            make_move(char, client_socket, board)
+
+            receive_data(client_socket, board, status)
+            if not status[0] == 'GIP':
+                print(player_no, status)
+                break
+
+        if status[0] == 'CAT':
+            continue
+        elif str(player_no) == status[0][1]:
+            print("YOU WON!")
+        else:
+            print("You Lost :( ")
+        break	
 
 
-def receive_data(client_socket):
+def receive_data(client_socket, board, status):
 
     data = client_socket.recv(1024).decode()
-    board.piece_list = list(data)
-
+    board.piece_list = list(data[:9])
+    print("Board:" , board.piece_list)
     board.draw_board()
+    status[0] = data[9:] 
+   
 
-
-def make_move(char, client_socket):
+def make_move(char, client_socket, board):
 
     tcflush(sys.stdin, TCIFLUSH)
     move = input("Make your next move: ")
 
-    while not is_valid_play(move):
+    while not is_valid_play(move, board):
         tcflush(sys.stdin, TCIFLUSH)
         move = input("Invalid move! Try again: ")
 
@@ -64,7 +84,7 @@ def make_move(char, client_socket):
     client_socket.send(''.join(board.piece_list).encode())
 
 
-def is_valid_play(move):
+def is_valid_play(move, board):
 
     if (move.isdigit() and int(move) >= 0 and int(move) < 9):
         if board.piece_list[int(move)] == '!':
