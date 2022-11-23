@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 from termios import TCIFLUSH, tcflush
 import display
 
@@ -39,21 +40,27 @@ def client():
             receive_data(client_socket, board, status)
 
         while True:
-            print("Waiting for opponent to move ...")
+            try:
+                print("Waiting for opponent to move ...")
+                receive_data(client_socket, board, status)
+                if not status[0] == 'GIP':
+                    print(player_no, status)
+                    break
 
-            receive_data(client_socket, board, status)
-            if not status[0] == 'GIP':
-                print(player_no, status)
-                break
+                make_move(char, client_socket, board)
 
-            make_move(char, client_socket, board)
-
-            receive_data(client_socket, board, status)
-            if not status[0] == 'GIP':
-                print(player_no, status)
-                break
+                receive_data(client_socket, board, status)
+                if not status[0] == 'GIP':
+                    print(player_no, status)
+                    break
+            except ValueError:
+                sys.exit( "client disconnected" )
+            except KeyboardInterrupt:
+                sys.exit( "You quit!" )
 
         if status[0] == 'CAT':
+            print( "CAT! Restarting game..." )
+            time.sleep( 3 )
             continue
         elif str(player_no) == status[0][1]:
             print("YOU WON!")
@@ -65,6 +72,8 @@ def client():
 def receive_data(client_socket, board, status):
 
     data = client_socket.recv(1024).decode()
+    if not data:
+        sys.exit("error: client disconnected")
     board.piece_list = list(data[:9])
     print("Board:" , board.piece_list)
     board.draw_board()

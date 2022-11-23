@@ -1,4 +1,5 @@
 import socket
+import time
 from display import Display
 
 
@@ -19,30 +20,36 @@ def server():
         num = i + 1
         CLIENT[i].send( str( num ).encode() )
 
-    while True: 
-        board = Display()
-        count = [0]
-        status = ['GIP']
+    while True:
+        try: 
+            board = Display()
+            count = [0]
+            status = ['GIP']
 
-        CLIENT[0].send( (''.join(board.piece_list)).encode() )
-        CLIENT[1].send( (''.join(board.piece_list)).encode() )
+            CLIENT[0].send( (''.join(board.piece_list)).encode() )
+            CLIENT[1].send( (''.join(board.piece_list)).encode() )
 
-        while True:
-            handle_move(board, count, 0, status)
-            if status[0] != 'GIP':	 
-                break
+            while True:
+                handle_move(board, count, 0, status)
+                if status[0] != 'GIP':	 
+                    break
             
-            handle_move(board, count, 1, status)
-            if status[0] != 'GIP':	    
-                break
+                handle_move(board, count, 1, status)
+                if status[0] != 'GIP':	    
+                    break
 
-        if status[0] != 'CAT':
-            input()
+            if status[0] != 'CAT':
+                break
+        except IndexError:
+            print("well somebody rage quit...")
+            time.sleep( 3 )
             break
-    print( "HERE" ) 
-#CLIENT[0].close()
-#CLIENT[1].close()
-  
+
+    print( "Shutting down clients" ) 
+    CLIENT[0].close()
+    CLIENT[1].close()
+    print( "Shutting down server" )
+    sock.close()
 
 def handle_move(board,count,num, status):
  
@@ -55,7 +62,7 @@ def handle_move(board,count,num, status):
        status[0] = 'P'+str(num+1)+ 'W'
     elif count[0] > 8:
         status[0] = 'CAT'
-    print("Board: ", board.piece_list,status)
+#print("Board: ", board.piece_list,status)
     CLIENT[0].send( (''.join(board.piece_list)+status[0]).encode() )
     CLIENT[1].send( (''.join(board.piece_list)+status[0]).encode() )
 
