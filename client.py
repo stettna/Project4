@@ -44,15 +44,14 @@ def client():
                 print("Waiting for opponent to move ...")
                 receive_data(client_socket, board, status)
                 if not status[0] == 'GIP':
-                    print(player_no, status)
                     break
 
                 make_move(char, client_socket, board)
 
                 receive_data(client_socket, board, status)
                 if not status[0] == 'GIP':
-                    print(player_no, status)
                     break
+
             except ValueError:
                 sys.exit( "client disconnected" )
             except KeyboardInterrupt:
@@ -75,7 +74,6 @@ def receive_data(client_socket, board, status):
     if not data:
         sys.exit("error: client disconnected")
     board.piece_list = list(data[:9])
-    print("Board:" , board.piece_list)
     board.draw_board()
     status[0] = data[9:] 
    
@@ -96,7 +94,7 @@ def make_move(char, client_socket, board):
 def is_valid_play(move, board):
 
     if (move.isdigit() and int(move) >= 0 and int(move) < 9):
-        if board.piece_list[int(move)] == '!':
+        if board.piece_list[int(move)].isdigit():
             return True
 
     return False

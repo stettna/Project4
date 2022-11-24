@@ -62,7 +62,6 @@ def handle_move(board,count,num, status):
        status[0] = 'P'+str(num+1)+ 'W'
     elif count[0] > 8:
         status[0] = 'CAT'
-#print("Board: ", board.piece_list,status)
     CLIENT[0].send( (''.join(board.piece_list)+status[0]).encode() )
     CLIENT[1].send( (''.join(board.piece_list)+status[0]).encode() )
 
