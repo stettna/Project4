@@ -87,14 +87,14 @@ def make_move(char, client_socket, board):
         tcflush(sys.stdin, TCIFLUSH)
         move = input("Invalid move! Try again: ")
 
-    board.piece_list[int(move)] = char
+    board.piece_list[int(move)-1] = char
     client_socket.send(''.join(board.piece_list).encode())
 
 
 def is_valid_play(move, board):
 
-    if (move.isdigit() and int(move) >= 0 and int(move) < 9):
-        if board.piece_list[int(move)].isdigit():
+    if (move.isdigit() and int(move) > 0 and int(move) <= 9):
+        if board.piece_list[int(move)-1].isdigit():
             return True
 
     return False
