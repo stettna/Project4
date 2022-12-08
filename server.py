@@ -9,8 +9,9 @@ def server():
 
     HOST = socket.gethostname()
     PORT = 5001
-
+    
     sock = socket.socket()
+    sock.setsockopt (socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
     sock.bind(( HOST, PORT ))
     sock.listen()
 
@@ -26,8 +27,8 @@ def server():
             count = [0]
             status = ['GIP']
 
-            CLIENT[0].send( (''.join(board.piece_list)).encode() )
-            CLIENT[1].send( (''.join(board.piece_list)).encode() )
+            CLIENT[0].send( (''.join(board.piece_list)+status[0]).encode() )
+            CLIENT[1].send( (''.join(board.piece_list)+status[0]).encode() )
 
             while True:
                 handle_move(board, count, 0, status)
@@ -40,9 +41,10 @@ def server():
 
             if status[0] != 'CAT':
                 break
+
         except IndexError:
             print("well somebody rage quit...")
-            time.sleep( 3 )
+            time.sleep( 3)
             break
 
     print( "Shutting down clients" ) 
@@ -54,14 +56,16 @@ def server():
 def handle_move(board,count,num, status):
  
     
-    data = CLIENT[num].recv(1024).decode()
+    data = CLIENT[num].recv(12).decode()
     board.piece_list = list(data)  
     count[0] += 1
-    
+    board.draw_board()    
+
     if detect_win(board):
        status[0] = 'P'+str(num+1)+ 'W'
     elif count[0] > 8:
         status[0] = 'CAT'
+
     CLIENT[0].send( (''.join(board.piece_list)+status[0]).encode() )
     CLIENT[1].send( (''.join(board.piece_list)+status[0]).encode() )
 

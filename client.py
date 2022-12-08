@@ -9,6 +9,7 @@ def client():
 
     try:
         host_name = sys.argv[1]
+
     except:
         print("You must enter a host name")
         return
@@ -19,10 +20,15 @@ def client():
     client_socket = socket.socket()
     client_socket.connect((host, port))
 
-    player_no = client_socket.recv(1024).decode()
+    player_no = client_socket.recv(1).decode()
 
     print( "WELCOME TO TIC TAC TOE\n" )
     print( "You are Player: " + str( player_no ) )
+    print('''For this game, the standard Tic-Taac-Toe rule apply. Try to get three in a row.
+To make a move, when it is your turn, enter the number shown in the positon you wish to plpace your piece. 
+If a tie or Cat occurs, a new round begins''')
+    time.sleep(3)
+
 
     while True:
         board = display.Display()
@@ -57,10 +63,12 @@ def client():
             except KeyboardInterrupt:
                 sys.exit( "You quit!" )
 
+
         if status[0] == 'CAT':
             print( "CAT! Restarting game..." )
-            time.sleep( 3 )
+            time.sleep(3)
             continue
+
         elif str(player_no) == status[0][1]:
             print("YOU WON!")
         else:
@@ -70,12 +78,12 @@ def client():
 
 def receive_data(client_socket, board, status):
 
-    data = client_socket.recv(1024).decode()
+    data = client_socket.recv(12).decode()
     if not data:
         sys.exit("error: client disconnected")
     board.piece_list = list(data[:9])
     board.draw_board()
-    status[0] = data[9:] 
+    status[0] = data[9:12] 
    
 
 def make_move(char, client_socket, board):
