@@ -24,7 +24,7 @@ def client():
     client_socket = socket.socket()
     client_socket.connect((host, port))
 
-    player_no = client_socket.recv(1).decode()
+    player_no = client_socket.recv(1).decode()   #player number determined by join order
 
     print( "WELCOME TO TIC TAC TOE\n" )
     print( "You are Player: " + str( player_no ) )
@@ -46,7 +46,7 @@ If a cat (tie) occurs, a new round begins.''')
             char = 'X'
             print("Waiting for opponent to join ... ")
 
-            receive_data(client_socket, board, status)
+            receive_data(client_socket, board, status)  
             make_move(char, client_socket, board) 
             receive_data(client_socket, board, status)
 
@@ -89,28 +89,28 @@ If a cat (tie) occurs, a new round begins.''')
 def receive_data(client_socket, board, status):
     "This function handles the receiving and processing of the current game state"
 
-    data = client_socket.recv(12).decode()
+    data = client_socket.recv(12).decode()   #receive game data from server
     if not data:
         sys.exit("error: client disconnected")
 
-    board.piece_list = list(data[:9])
+    board.piece_list = list(data[:9])        #only the piece list
     board.draw_board()
-    status[0] = data[9:12] 
+    status[0] = data[9:12]                   #game status
    
 
 def make_move(char, client_socket, board):
     "This function handles input of players next move and sends new board state back to the server"
 
-    tcflush(sys.stdin, TCIFLUSH)
-    move = input("Make your next move: ")
+    tcflush(sys.stdin, TCIFLUSH)             #flush all input while waiting
+    move = input("Make your next move: ")    #get input
 
-    while not is_valid_play(move, board):
+    while not is_valid_play(move, board):    #only numbers 1 - 9 are valid input
         tcflush(sys.stdin, TCIFLUSH)
-        move = input("Invalid move! Try again: ")
+        move = input("Invalid move! Try again: ") #redo input if not valid
 
-    board.piece_list[int(move)-1] = char
+    board.piece_list[int(move)-1] = char     #make X or O in players input
 
-    client_socket.send(''.join(board.piece_list).encode())
+    client_socket.send(''.join(board.piece_list).encode()) #pack up and send
 
 
 def is_valid_play(move, board):

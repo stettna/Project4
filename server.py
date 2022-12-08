@@ -16,11 +16,11 @@ def server():
     PORT = 5001
     
     sock = socket.socket()
-    sock.setsockopt (socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
+    sock.setsockopt (socket.SOL_SOCKET, socket.SO_REUSEADDR,1) #recycle port number
     sock.bind(( HOST, PORT ))
     sock.listen()
 
-    for i in range( 2 ):
+    for i in range( 2 ):      #listen for only two clients, then continue
         conn, addr = sock.accept()
         CLIENT.append( conn )
         num = i + 1
@@ -30,13 +30,13 @@ def server():
     while True:
         try: 
             board = Display()
-            count = [0]
+            count = [0]                #game state
             status = ['GIP']
 
             CLIENT[0].send( (''.join(board.piece_list)+status[0]).encode() )
             CLIENT[1].send( (''.join(board.piece_list)+status[0]).encode() )
 
-            while True:
+            while True:   #handle move and check status as the game progresses
                 handle_move(board, count, 0, status)
                 if status[0] != 'GIP':	 
                     break
@@ -60,8 +60,8 @@ def handle_move(board,count,num, status):
     "This function handles the receiving of the game state from a client and the sending updated state to each client."
     
     data = CLIENT[num].recv(9).decode()
-    board.piece_list = list(data)  
-    count[0] += 1
+    board.piece_list = list(data) #unpack piece list
+    count[0] += 1                 #increment game state
     board.draw_board()    
 
     if detect_win(board):
