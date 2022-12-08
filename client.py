@@ -28,9 +28,13 @@ def client():
 
     print( "WELCOME TO TIC TAC TOE\n" )
     print( "You are Player: " + str( player_no ) )
-    print('''For this game, the standard Tic-Taac-Toe rule apply. Try to get three in a row.
-To make a move, when it is your turn, enter the number shown in the positon you wish to plpace your piece. 
-If a tie or Cat occurs, a new round begins''')
+    print('''The goal of the game is to try and get three in a row.
+
+--To make a move--
+-When it is your turn, enter the number shown in the positon you wish to place your piece.
+
+The program runs until there is a winner.
+If a cat (tie) occurs, a new round begins.''')
     time.sleep(3)
 
     #Start of game logic
