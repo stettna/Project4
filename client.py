@@ -1,5 +1,9 @@
-import socket
+#Nathan Stettler, Austin Black
+#CMSC-280: Project 4
+#12/07/22
+
 import sys
+import socket
 import time
 from termios import TCIFLUSH, tcflush
 import display
@@ -29,7 +33,7 @@ To make a move, when it is your turn, enter the number shown in the positon you 
 If a tie or Cat occurs, a new round begins''')
     time.sleep(3)
 
-
+    #Start of game logic
     while True:
         board = display.Display()
         status = ['GIP']      
@@ -37,6 +41,7 @@ If a tie or Cat occurs, a new round begins''')
         if player_no == "1":
             char = 'X'
             print("Waiting for opponent to join ... ")
+
             receive_data(client_socket, board, status)
             make_move(char, client_socket, board) 
             receive_data(client_socket, board, status)
@@ -48,6 +53,7 @@ If a tie or Cat occurs, a new round begins''')
         while True:
             try:
                 print("Waiting for opponent to move ...")
+
                 receive_data(client_socket, board, status)
                 if not status[0] == 'GIP':
                     break
@@ -77,16 +83,19 @@ If a tie or Cat occurs, a new round begins''')
 
 
 def receive_data(client_socket, board, status):
+    "This function handles the receiving and processing of the current game state"
 
     data = client_socket.recv(12).decode()
     if not data:
         sys.exit("error: client disconnected")
+
     board.piece_list = list(data[:9])
     board.draw_board()
     status[0] = data[9:12] 
    
 
 def make_move(char, client_socket, board):
+    "This function handles input of players next move and sends new board state back to the server"
 
     tcflush(sys.stdin, TCIFLUSH)
     move = input("Make your next move: ")
@@ -96,10 +105,12 @@ def make_move(char, client_socket, board):
         move = input("Invalid move! Try again: ")
 
     board.piece_list[int(move)-1] = char
+
     client_socket.send(''.join(board.piece_list).encode())
 
 
 def is_valid_play(move, board):
+    "This function checks to see if the players input is a valid move"
 
     if (move.isdigit() and int(move) > 0 and int(move) <= 9):
         if board.piece_list[int(move)-1].isdigit():

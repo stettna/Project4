@@ -1,3 +1,7 @@
+#Nathan Stettler, Austin Black
+#CMSC-280: Project 4
+#12/07/22
+
 import socket
 import time
 from display import Display
@@ -6,6 +10,7 @@ from display import Display
 CLIENT = []
 
 def server():
+    "This is a server that allows to players to connect and play tic tac toe"
 
     HOST = socket.gethostname()
     PORT = 5001
@@ -21,6 +26,7 @@ def server():
         num = i + 1
         CLIENT[i].send( str( num ).encode() )
 
+    #Start of game logic
     while True:
         try: 
             board = Display()
@@ -47,16 +53,13 @@ def server():
             time.sleep( 3)
             break
 
-    print( "Shutting down clients" ) 
-    CLIENT[0].close()
-    CLIENT[1].close()
-    print( "Shutting down server" )
-    sock.close()
+    shut_down(sock)
+
 
 def handle_move(board,count,num, status):
- 
+    "This function handles the receiving of the game state from a client and the sending updated state to each client."
     
-    data = CLIENT[num].recv(12).decode()
+    data = CLIENT[num].recv(9).decode()
     board.piece_list = list(data)  
     count[0] += 1
     board.draw_board()    
@@ -71,7 +74,7 @@ def handle_move(board,count,num, status):
 
  
 def detect_win(board):
-    """Detects if a player a won the game or not"""
+    "Detects if a player has won the game"
 
     if any( (('X' == board.piece_list[a] == board.piece_list[b] == board.piece_list[c]) or 
     ( 'O' == board.piece_list[a] == board.piece_list[b] == board.piece_list[c])) 
@@ -80,6 +83,16 @@ def detect_win(board):
     else:
         return False
 
+
+def shut_down(sock):
+    "This function closes conections to the clients and shuts down the server."
+
+    print( "Shutting down clients" ) 
+    CLIENT[0].close()
+    CLIENT[1].close()
+
+    print( "Shutting down server" )
+    sock.close()
 
 if __name__ == '__main__':
     server()
